@@ -121,6 +121,17 @@
         }
     }
 
+    const searchInput = document.getElementById('search-input');
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            if (query !== '') {
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+
     // location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
