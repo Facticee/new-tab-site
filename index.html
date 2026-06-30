@@ -64,6 +64,18 @@
     const notesToggle = document.getElementById('notes-toggle');
     const notesPanel = document.getElementById('notes-panel');
 
+    notesArea.value = localStorage.getItem('newtab-notes') || '';
+    notesArea.addEventListener('input', () => {
+        localStorage.setItem('newtab-notes', notesArea.value);
+    });
+
+    notesToggle.addEventListener('click', () => {
+        notesPanel.classList.toggle('open');
+        if (notesPanel.classList.contains('open')) notesArea.focus();
+    });
+
+
+
 
 
 
