@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Utility Tools</title>
+    <title>Init-System</title>
 </head>
 
 <body>
@@ -56,9 +56,7 @@
 
 
 
-
-
-
+    // This helped me ALOT: https://open-meteo.com/en/docs ; https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 
     const notesArea = document.getElementById('notes-area');
     const notesToggle = document.getElementById('notes-toggle');
@@ -75,10 +73,63 @@
     });
 
 
+    const weatherEl = document.getElementById('weather');
 
 
+    // used ai for this "api number code to text translation" down here
+    const weatherMap = {
+        0: 'Clear Sky', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+        45: 'Fog', 48: 'Icy Fog',
+        51: 'Light Drizzle', 53: 'Moderate Drizzle', 55: 'Heavy Drizzle',
+        56: 'Light Freezing Drizzle', 57: 'Heavy Freezing Drizzle',
+        61: 'Light Rain', 63: 'Moderate Rain', 65: 'Heavy Rain',
+        66: 'Light Freezing Rain', 67: 'Heavy Freezing Rain',
+        71: 'Light Snow', 73: 'Moderate Snow', 75: 'Heavy Snow',
+        77: 'Snow Grains',
+        80: 'Light Showers', 81: 'Moderate Showers', 82: 'Heavy Showers',
+        95: 'Thunderstorm', 96: 'Thunderstorm & Hail', 99: 'Heavy Thunderstorm & Hail'
+    };
 
 
+    async function loadWeather(lat, lon) {
+        try {
+            const params = new URLSearchParams({
+                latitude: lat,
+                longitude: lon,
+                current: 'temperature_2m,weather_code'
+            });
+
+            const baseUrl = 'https://api.open-meteo.com/v1/forecast';
+            const response = await fetch(`${baseUrl}?${params}`);
+
+            if (!response.ok) {
+                throw new Error('Error fetching data');
+            }
+
+            const data = await response.json();
+
+            const temperature = data.current.temperature_2m;
+            const weathercode = data.current.weather_code;
+
+            // gemini said i need a fallback..
+            const weatherText = weatherMap[weathercode] || 'Weather';
+
+            weatherEl.innerHTML = `<span class="temp">${Math.round(temperature)}°C</span> ${weatherText}`;
+
+        } catch (error) {
+            weatherEl.textContent = 'Weather not found; no location';
+        }
+    }
+
+    // location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => loadWeather(pos.coords.latitude, pos.coords.longitude),
+            () => { weatherEl.textContent = 'No location'; }
+        );
+    } else {
+        weatherEl.textContent = 'No location';
+    }
 
 </script>
 
