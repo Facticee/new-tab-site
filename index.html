@@ -13,10 +13,12 @@
 
 <div class="topbar">
     <div id="weather">Loading Weather…</div>
-
+    <div id="live-uhr"></div>
 </div>
 
 <div class="center">
+    <div id="date"></div>
+    <div id="big-time"></div>
     <div class="search-box">
         <input type="text" id="search-input" placeholder="Google search..." autofocus>
     </div>
@@ -25,10 +27,44 @@
 
 
 <div id="notes-toggle">✎</div>
-
+<div id="notes-panel" class="notes-panel">
+    <div class="label">Notizen</div>
+    <textarea id="notes-area" placeholder="Type your notes..."></textarea>
+</div>
 
 
 <script>
+
+    function updateClock() {
+        const now = new Date();
+
+        document.getElementById('live-uhr').textContent = now.toLocaleTimeString();
+        document.getElementById('big-time').textContent = now.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+
+        document.getElementById('date').textContent = now.toLocaleDateString(undefined, {
+            weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+        });
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+
+
+
+
+
+
+
+    const notesArea = document.getElementById('notes-area');
+    const notesToggle = document.getElementById('notes-toggle');
+    const notesPanel = document.getElementById('notes-panel');
+
+
 
 
 
